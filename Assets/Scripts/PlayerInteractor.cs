@@ -1,18 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerInteractor : MonoBehaviour
 {
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private LayerMask interactableLayer;
     [SerializeField] private Transform holdPoint;
-    [SerializeField] private GameObject dropButton;
+    [SerializeField] private Button dropButton;
     private GameObject heldObject;
 
     private void Start()
     {
-        dropButton.SetActive(false);
+       dropButton.onClick.AddListener(() => DropObject());
+       //dropButton.SetActive(false);
     }
 
     public void TryPickUpObject()
@@ -20,7 +22,7 @@ public class PlayerInteractor : MonoBehaviour
         if (heldObject != null) return;
 
         Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
-        if (Physics.Raycast(ray, out RaycastHit hit, 222222f, interactableLayer))
+        if (Physics.Raycast(ray, out RaycastHit hit, 2f, interactableLayer))
         {
             Debug.Log("Объект найден: " + hit.collider.gameObject.name); // Отладка
 
@@ -38,7 +40,6 @@ public class PlayerInteractor : MonoBehaviour
 
             heldObject.transform.SetParent(holdPoint);
             heldObject.transform.localPosition = Vector3.zero;
-            dropButton.SetActive(true);
         }
         else
         {
@@ -55,7 +56,6 @@ public class PlayerInteractor : MonoBehaviour
         rb.isKinematic = false;
         rb.AddForce(cameraTransform.forward * 5f, ForceMode.Impulse);
         heldObject = null;
-        dropButton.SetActive(false);
     }
 }
 
